@@ -9,12 +9,59 @@ class TickerDetector {
       'CRM', 'NFLX', 'AMD', 'INTC', 'CMCSA', 'ORCL', 'XOM', 'NKE', 'TXN', 'QCOM'
     ]);
     this.processedNodes = new WeakSet();
+    this.dropdown = null;
     this.init();
   }
 
   init() {
+    this.createDropdown();
     this.scanAndHighlightTickers();
     this.observeChanges();
+  }
+
+  createDropdown() {
+    // Create single reusable dropdown
+    this.dropdown = document.createElement('div');
+    this.dropdown.className = 'ticker-info-menu';
+    this.dropdown.style.position = 'fixed';
+    this.dropdown.style.display = 'none';
+    this.dropdown.style.zIndex = '10000';
+
+    // Create menu items structure
+    const menuItems = [
+      { id: 'finviz', label: 'Search on Finviz', icon: '📊' },
+      { id: 'google', label: 'Search on Google', icon: '🔍' },
+      { id: 'yahoo', label: 'Search on Yahoo Finance', icon: '💰' },
+      { id: 'perplexity', label: 'Search on Perplexity', icon: '🤖' }
+    ];
+
+    menuItems.forEach(item => {
+      const menuItem = document.createElement('div');
+      menuItem.className = 'ticker-info-menu-item';
+      menuItem.innerHTML = `${item.icon} ${item.label}`;
+      menuItem.dataset.platform = item.id;
+      this.dropdown.appendChild(menuItem);
+    });
+
+    // Add close button
+    const closeBtn = document.createElement('div');
+    closeBtn.className = 'ticker-info-close';
+    closeBtn.innerHTML = '✖';
+    closeBtn.addEventListener('click', () => this.hideDropdown());
+    this.dropdown.appendChild(closeBtn);
+
+    document.body.appendChild(this.dropdown);
+
+    // Setup outside click handler
+    this.setupOutsideClickHandler();
+  }
+
+  setupOutsideClickHandler() {
+    document.addEventListener('click', (e) => {
+      if (this.dropdown.style.display === 'block' && !this.dropdown.contains(e.target)) {
+        this.hideDropdown();
+      }
+    });
   }
 
   scanAndHighlightTickers() {
@@ -101,80 +148,55 @@ class TickerDetector {
     span.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      this.showTickerMenu(ticker, e.clientX, e.clientY);
+      this.showTickerDropdown(ticker, e.target);
     });
     
     return span;
   }
 
-  showTickerMenu(ticker, x, y) {
-    // Remove existing menu if any
-    const existingMenu = document.querySelector('.ticker-info-menu');
-    if (existingMenu) {
-      existingMenu.remove();
-    }
-
-    const menu = document.createElement('div');
-    menu.className = 'ticker-info-menu';
-    menu.style.position = 'fixed';
-    menu.style.left = `${x}px`;
-    menu.style.top = `${y}px`;
-    menu.style.zIndex = '10000';
-
-    const menuItems = [
-      {
-        label: 'Search on Finviz',
-        url: `https://finviz.com/quote.ashx?t=${ticker}&p=d`,
-        icon: '📊'
-      },
-      {
-        label: 'Search on Google',
-        url: `https://www.google.com/search?q=${ticker}+stock`,
-        icon: '🔍'
-      },
-      {
-        label: 'Search on Yahoo Finance',
-        url: `https://finance.yahoo.com/quote/${ticker}`,
-        icon: '💰'
-      },
-      {
-        label: 'Search on Perplexity',
-        url: `https://www.perplexity.ai/search?q=${ticker}+stock+analysis`,
-        icon: '🤖'
-      }
-    ];
-
-    menuItems.forEach(item => {
-      const menuItem = document.createElement('div');
-      menuItem.className = 'ticker-info-menu-item';
-      menuItem.innerHTML = `${item.icon} ${item.label}`;
-      menuItem.addEventListener('click', () => {
-        window.open(item.url, '_blank');
-        menu.remove();
-      });
-      menu.appendChild(menuItem);
-    });
-
-    // Add close button
-    const closeBtn = document.createElement('div');
-    closeBtn.className = 'ticker-info-close';
-    closeBtn.innerHTML = '✖';
-    closeBtn.addEventListener('click', () => menu.remove());
-    menu.appendChild(closeBtn);
-
-    document.body.appendChild(menu);
-
-    // Close menu when clicking outside
-    const closeOnOutsideClick = (e) => {
-      if (!menu.contains(e.target)) {
-        menu.remove();
-        document.removeEventListener('click', closeOnOutsideClick);
-      }
-    };
+  showTickerDropdown(ticker, tickerElement) {
+    // Position dropdown next to the ticker element
+    const rect = tickerElement.getBoundingClientRect();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
     
-    setTimeout(() => {
-      document.addEventListener('click', closeOnOutsideClick);
-    }, 10);
+    this.dropdown.style.left = `${rect.left + scrollLeft}px`;
+    this.dropdown.style.top = `${rect.bottom + scrollTop + 2}px`;
+    this.dropdown.style.display = 'block';
+
+    // Update menu items with ticker-specific URLs
+    const menuItems = this.dropdown.querySelectorAll('.ticker-info-menu-item');
+    menuItems.forEach(item => {
+      const platform = item.dataset.platform;
+      let url;
+      
+      switch (platform) {
+        case 'finviz':
+          url = `https://finviz.com/quote.ashx?t=${ticker}&p=d`;
+          break;
+        case 'google':
+          url = `https://www.google.com/search?q=${ticker}+stock`;
+          break;
+        case 'yahoo':
+          url = `https://finance.yahoo.com/quote/${ticker}`;
+          break;
+        case 'perplexity':
+          url = `https://www.perplexity.ai/search?q=${ticker}+stock+analysis`;
+          break;
+      }
+      
+      // Remove existing click listeners and add new one
+      const newItem = item.cloneNode(true);
+      newItem.addEventListener('click', () => {
+        window.open(url, '_blank');
+        this.hideDropdown();
+      });
+      item.parentNode.replaceChild(newItem, item);
+    });
+  }
+
+  hideDropdown() {
+    this.dropdown.style.display = 'none';
   }
 
   observeChanges() {
