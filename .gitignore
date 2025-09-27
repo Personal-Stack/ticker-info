@@ -1,0 +1,22 @@
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Development files
+node_modules/
+.vscode/
+.idea/
+
+# Build artifacts
+dist/
+build/
+
+# Extension packaging
+*.zip
+*.crx
+
+# Test files that might be generated
+test_*.html
+debug_*.js

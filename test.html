@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticker Detection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ticker Symbol Detection Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Common Stock Symbols</h2>
+        <p>Apple (AAPL) is trading higher today. Microsoft MSFT also gained ground.</p>
+        <p>Don't forget about $GOOGL and $AMZN in your portfolio.</p>
+        <p>Tesla stock (TSLA) surged after earnings. NVDA is also performing well.</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Mixed Content</h2>
+        <p>The S&P 500 includes companies like JPM, BAC, and WMT.</p>
+        <p>In tech news: $META announced new features, while NFLX streams continue to grow.</p>
+        <p>Energy sector: XOM and CVX showing strength.</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Edge Cases</h2>
+        <p>Some words that might be confused: USA, CEO, API, HTML, CSS.</p>
+        <p>But these should be detected: $BRK, UNH, JNJ.</p>
+        <p>Mixed case: aapl vs AAPL (only uppercase should be detected).</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>Dynamic Content</h2>
+        <button onclick="addContent()">Add More Tickers</button>
+        <div id="dynamic-content"></div>
+    </div>
+
+    <script>
+        function addContent() {
+            const content = document.getElementById('dynamic-content');
+            const newP = document.createElement('p');
+            newP.textContent = 'Dynamically added: $TSLA, AAPL, and MSFT are trending.';
+            content.appendChild(newP);
+        }
+    </script>
+</body>
+</html>
