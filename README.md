@@ -4,13 +4,13 @@ A Chrome extension that automatically detects market ticker symbols on web pages
 
 ## Features
 
-- **Automatic Detection**: Scans web pages for ticker symbols (e.g., AAPL, $MSFT, GOOGL)
+- **Automatic Detection**: Scans web pages for ticker symbols (e.g., AAPL💹, $MSFT💹, GOOGL💹)
 - **Visual Highlighting**: Highlights detected tickers with a subtle blue background
 - **Quick Search Menu**: Click any ticker to access search options for:
   - **Finviz**: Detailed stock charts and financial data
   - **Google**: General stock information and news
   - **Yahoo Finance**: Stock quotes and financial statements  
-  - **Perplexity**: AI-powered stock analysis
+  - **Perplexity**: AI💹-powered stock analysis
 - **Real-time Detection**: Works with dynamically loaded content
 
 ## Installation
@@ -62,7 +62,6 @@ Open the included `test.html` file in Chrome to see the extension in action with
 ticker-info/
 ├── manifest.json      # Extension configuration
 ├── content.js         # Main ticker detection logic
-├── background.js      # Service worker for extension
 ├── styles.css         # Styling for highlighted tickers and menu
 ├── test.html          # Test page for development
 └── icons/             # Extension icons (16x16, 32x32, 48x48, 128x128)
@@ -70,7 +69,7 @@ ticker-info/
 
 ### Key Components
 
-- **Content Script**: Scans DOM for ticker patterns and handles user interactions
+- **Content Script**: Scans DOM💹 for ticker patterns and handles user interactions
 - **Background Script**: Manages extension lifecycle and context menus
 - **Styling**: Provides visual feedback for detected tickers and search menu
 
