@@ -80,7 +80,3 @@ ticker-info/
 2. Create a feature branch: `git checkout -b feature-name`
 3. Make your changes and test thoroughly
 4. Submit a pull request
-
-## License
-
-MIT License - see LICENSE file for details
